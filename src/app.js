@@ -1,5 +1,5 @@
-import express from "express"
-import route from "./routes/k8s.js";
+import express from 'express';
+import route from './routes/k8s.js';
 
 const app = express();
 
