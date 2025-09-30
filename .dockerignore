@@ -1,0 +1,8 @@
+node_modules
+Dockerfile
+.prettierrc
+eslint.config.js
+.env
+.gitignore
+.git
+npm-debug.log
