@@ -2,6 +2,16 @@
   "name": "acquisitions",
   "version": "1.0.0",
   "main": "index.js",
+  "imports": {
+    "#configs/*": "./src/configs/*",
+    "#controllers/*": "./src/controllers/*",
+    "#middleware/*": "./src/middleware/*",
+    "#models/*": "./src/models/*",
+    "#routes/*": "./src/routes/*",
+    "#services/*": "./src/services/*",
+    "#validations/*": "./src/validations/*",
+    "#utils/*": "./src/utils/*"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch src/index.js",
@@ -27,6 +37,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "pg": "^8.16.3",
     "prettier": "^3.6.2",
     "winston": "^3.18.3"
