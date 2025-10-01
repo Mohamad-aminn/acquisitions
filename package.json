@@ -28,7 +28,8 @@
     "eslint-plugin-prettier": "^5.5.4",
     "express": "^5.1.0",
     "pg": "^8.16.3",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@types/pg": "^8.15.5",
