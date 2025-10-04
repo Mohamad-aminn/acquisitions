@@ -8,6 +8,20 @@
       "when": 1759306940244,
       "tag": "0000_sturdy_black_panther",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1759564686613,
+      "tag": "0001_minor_strong_guy",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759565699275,
+      "tag": "0002_luxuriant_stature",
+      "breakpoints": true
     }
   ]
 }
