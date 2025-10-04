@@ -4,7 +4,10 @@ import {loginSchema, phoneSchema} from "#validations/auth.js";
 import db from "#configs/db.js";
 import {otp, users} from "#models/schema.js";
 import "dotenv/config.js"
-import {eq} from "drizzle-orm";
+import {desc, eq, or} from "drizzle-orm";
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import {getUserOrCreateOne} from "#utils/user.js";
 
 const route = express.Router();
 
@@ -24,14 +27,22 @@ route.post("/phone/send-otp", async (req, res) => {
 
         const code = (Math.floor(Math.random()*90000) + 10000).toString();
 
-        await db.insert(otp).values({code, phone: "09201370140"})
+        bcrypt.hash(code, 9, async (err, hash)  => {
+            if(err) {
+                return res.status(401).json(err);
+            }
 
-        const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
-        if(smsResult.RetStatus !== 1) {
-            return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
-        }
+            await db.insert(otp).values({code:hash, phone: body.phoneNumber, created_at: new Date(), expires_in: new Date(Date.now() + 2 * 60 * 1000)});
 
-        res.status(201).json({})
+
+            const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
+            if(smsResult.RetStatus !== 1) {
+                return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
+            }
+
+            res.status(201).json({})
+
+        });
     }
     catch (err) {
         res.status(500).json(err)
@@ -47,16 +58,75 @@ route.post("/phone/verify", async (req, res) => {
             return res.status(401).json(validate);
         }
 
-        const otpObject = await db.query.otp.findMany({where: eq(otp.phone, body.phoneNumber)});
+        const {name,password, email, phoneNumber, otp: userCode} = body;
+
+        const otpObject = await db.select()
+            .from(otp)
+            .orderBy(desc(otp.created_at))
+            .limit(1);
+        console.log(new Date())
+        console.log(await db.select().from(otp))
         if (otpObject.length === 0) {
-            return  res.status(400).json(body.phoneNumber);
+            return  res.status(400).json({message: "you did not request a code yet!"});
         }
 
-        res.status(200).json(otpObject)
+        if(otpObject[0].expires_in < new Date()) {
+            console.log(new Date(), otpObject[0].expires_in)
+            return res.status(401).json({message: 'code expired!'});
+        }
+
+        bcrypt.compare(userCode, otpObject[0].code, async (err, result) => {
+            if(err) {
+                return res.status(401).json(err);
+            }
+            if(!result) {
+                return res.status(400).json({message: 'wrong code!'});
+            }
+
+            bcrypt.hash(password, 9, async (err, hash) => {
+                if(err) {
+                    return res.status(401).json(err);
+                }
+                const user = await getUserOrCreateOne(
+                    {
+                        name,
+                        phone: phoneNumber,
+                        email,
+                        password: hash,
+                    }
+                )
+                console.log(user)
+                await db.delete(otp).where(eq(otp.phone, phoneNumber));
+
+                const token = jwt.sign({
+                    id: user.id
+                }, process.env.JWT_SECRET, {expiresIn: "1h"});
+
+                res.status(200).json({token, user});
+            })
+        });
     }catch (err) {
         console.log(err)
         res.status(500).json(err)
     }
+})
+
+route.delete("/phone/delete", async (req, res) => {
+    try {
+        const {phoneNumber} = req.body;
+        await db.delete(users).where(eq(users.phone, phoneNumber));
+
+        res.status(200).json({phoneNumber});
+    }catch (err) {
+        res.status(500).json(err);
+    }
+
+})
+
+route.get('/users', async (req, res) => {
+    const users = await db.query.users.findMany();
+
+    res.status(200).json(users)
 })
 
 

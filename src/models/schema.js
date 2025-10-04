@@ -10,8 +10,8 @@ export const trash = pgTable("trashs", {
 
 export const users = pgTable("users", {
     id: serial('id').primaryKey(),
-    name: varchar('name', {length: 255}).notNull(),
-    email: varchar('email', {length: 255}).notNull().unique(),
+    name: varchar('name', {length: 255}),
+    email: varchar('email', {length: 255}).unique(),
     phone: varchar("phone", {length: 15}).notNull(),
     password: varchar('password', {length: 255}).notNull(),
     role: varchar('role', {length: 50}).notNull().default('user'),
@@ -22,8 +22,8 @@ export const users = pgTable("users", {
 export const otp = pgTable("otps", {
     code: varchar("code").notNull(),
     phone: varchar("phone").notNull(),
-    expires_in: timestamp().default(new Date(Date.now() + 2 * 80 * 1000)),
-    created_at: timestamp().defaultNow(),
+    expires_in: timestamp().default(new Date(Date.now() + 2 * 60 * 1000)),
+    created_at: timestamp().default(new Date()),
 })
 
 export const test = pgTable("tests", {
