@@ -22,7 +22,7 @@ export const users = pgTable("users", {
 export const otp = pgTable("otps", {
     code: varchar("code").notNull(),
     phone: varchar("phone").notNull(),
-    expires_in: timestamp().default(new Date(Date.now() + 2 * 60 * 1000)),
+    expires_in: timestamp().default(new Date(Date.now() + 2 * 80 * 1000)),
     created_at: timestamp().defaultNow(),
 })
 

@@ -1,9 +1,10 @@
 import express from "express";
 import sms, {randomText, smsResponseCode} from "#utils/sms.js";
-import {phoneSchema} from "#validations/auth.js";
+import {loginSchema, phoneSchema} from "#validations/auth.js";
 import db from "#configs/db.js";
-import {otp, test} from "#models/schema.js";
+import {otp, users} from "#models/schema.js";
 import "dotenv/config.js"
+import {eq} from "drizzle-orm";
 
 const route = express.Router();
 
@@ -37,8 +38,25 @@ route.post("/phone/send-otp", async (req, res) => {
     }
 })
 
-route.get("/phone", async (req, res) => {
-    await db.select().from(test)
+route.post("/phone/verify", async (req, res) => {
+    try {
+        const body = req.body;
+        const validate = loginSchema.safeParse(body);
+
+        if(!validate.success) {
+            return res.status(401).json(validate);
+        }
+
+        const otpObject = await db.query.otp.findMany({where: eq(otp.phone, body.phoneNumber)});
+        if (otpObject.length === 0) {
+            return  res.status(400).json(body.phoneNumber);
+        }
+
+        res.status(200).json(otpObject)
+    }catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
 })
 
 

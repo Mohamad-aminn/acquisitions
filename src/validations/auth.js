@@ -6,4 +6,9 @@ export const phoneSchema = z.object({
     phoneNumber: z.string().refine((v) =>  phoneRegExp.test(v ?? ""))
 })
 
+export const loginSchema = z.object({
+    phoneNumber: z.string().refine((v) =>  phoneRegExp.test(v ?? "")).trim(),
+    otp: z.string().max(15).trim()
+})
+
 
