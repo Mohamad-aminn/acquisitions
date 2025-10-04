@@ -1,9 +1,41 @@
 {
-  "id": "b5cf7759-41e1-4513-b810-7e32f47c2cc9",
-  "prevId": "34abd4f7-db22-4e98-9117-654b90337d27",
+  "id": "d5e5de32-ebdc-444d-bc52-a28aa0930306",
+  "prevId": "cf124e8e-214a-4cec-ac44-f0032af365ef",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.otps": {
+      "name": "otps",
+      "schema": "",
+      "columns": {
+        "code": {
+          "name": "code",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.trashs": {
       "name": "trashs",
       "schema": "",

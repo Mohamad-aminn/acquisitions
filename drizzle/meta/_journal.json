@@ -5,22 +5,50 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1759306940244,
-      "tag": "0000_sturdy_black_panther",
+      "when": 1759570455377,
+      "tag": "0000_same_edwin_jarvis",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1759564686613,
-      "tag": "0001_minor_strong_guy",
+      "when": 1759570486905,
+      "tag": "0001_faithful_nekra",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
-      "when": 1759565699275,
-      "tag": "0002_luxuriant_stature",
+      "when": 1759570499550,
+      "tag": "0002_right_paladin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1759570536590,
+      "tag": "0003_wonderful_vampiro",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1759570729732,
+      "tag": "0004_loose_wolverine",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1759571075320,
+      "tag": "0005_bitter_havok",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1759572183460,
+      "tag": "0006_mute_miek",
       "breakpoints": true
     }
   ]

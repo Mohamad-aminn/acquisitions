@@ -1,6 +1,6 @@
 {
-  "id": "cf124e8e-214a-4cec-ac44-f0032af365ef",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "95f1d8b0-a8f8-469b-ada6-1fce321c0a6d",
+  "prevId": "c2216042-8438-45fe-806c-cbde44d2d465",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -25,7 +25,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "default": "'2025-10-04 09:36:15.301'"
+          "default": "'2025-10-04 09:37:36.515'"
         },
         "created_at": {
           "name": "created_at",

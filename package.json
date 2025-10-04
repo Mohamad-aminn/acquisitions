@@ -35,6 +35,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
+    "drizzle-zod": "^0.8.3",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -43,8 +44,10 @@
     "melipayamak": "^1.0.5",
     "morgan": "^1.10.1",
     "pg": "^8.16.3",
+    "postgres": "^3.4.7",
     "prettier": "^3.6.2",
-    "winston": "^3.18.3"
+    "winston": "^3.18.3",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/pg": "^8.15.5",

@@ -9,4 +9,5 @@ route.get('/readyz', (req, res) => {
   res.send('ready').status(200);
 });
 
+
 export default route;

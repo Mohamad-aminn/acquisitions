@@ -1,6 +1,6 @@
 {
-  "id": "cf124e8e-214a-4cec-ac44-f0032af365ef",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "dd307a7a-3f6a-43a9-a537-c4024aa8ea85",
+  "prevId": "ad8dc0df-430c-4cfc-9917-1e8712e0c8bb",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -25,7 +25,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "default": "'2025-10-04 09:36:15.301'"
+          "default": "'2025-10-04 09:46:35.240'"
         },
         "created_at": {
           "name": "created_at",
@@ -33,6 +33,25 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tests": {
+      "name": "tests",
+      "schema": "",
+      "columns": {
+        "code": {
+          "name": "code",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
