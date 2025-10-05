@@ -161,3 +161,5 @@
 {"level":"info","message":"::1 - - [04/Oct/2025:12:50:30 +0000] \"POST /auth/phone/send-otp HTTP/1.1\" 201 2 \"-\" \"-\"","service":"acquisitions-api","timestamp":"2025-10-04T12:50:30.656Z"}
 {"level":"info","message":"::1 - - [04/Oct/2025:12:50:43 +0000] \"POST /auth/phone/verify HTTP/1.1\" 200 398 \"-\" \"PostmanRuntime/7.37.3\"","service":"acquisitions-api","timestamp":"2025-10-04T12:50:43.231Z"}
 {"level":"info","message":"::1 - - [04/Oct/2025:12:50:45 +0000] \"POST /auth/phone/verify HTTP/1.1\" 400 45 \"-\" \"PostmanRuntime/7.37.3\"","service":"acquisitions-api","timestamp":"2025-10-04T12:50:45.425Z"}
+{"level":"info","message":"::1 - - [05/Oct/2025:10:17:51 +0000] \"POST /auth/phone/send-otp HTTP/1.1\" 201 2 \"-\" \"-\"","service":"acquisitions-api","timestamp":"2025-10-05T10:17:51.673Z"}
+{"level":"info","message":"::1 - - [05/Oct/2025:10:18:15 +0000] \"POST /auth/phone/verify HTTP/1.1\" 200 398 \"-\" \"PostmanRuntime/7.37.3\"","service":"acquisitions-api","timestamp":"2025-10-05T10:18:15.776Z"}

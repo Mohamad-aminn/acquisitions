@@ -1,6 +1,7 @@
 import express from 'express';
 import route from './routes/k8s.js';
 import authRoute from './routes/auth.js';
+import userRoute from './routes/user.js';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import logger from "#configs/logger.js";
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
 
 app.use('/', route);
-app.use("/auth", authRoute)
+app.use("/auth", authRoute);
+app.use('/user', userRoute);
 
 export default app;
