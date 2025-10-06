@@ -12,40 +12,42 @@ import {getUserOrCreateOne} from "#utils/user.js";
 const route = express.Router();
 
 route.post("/phone/send-otp", async (req, res) => {
-    try {
         const body = req.body;
 
         const isPhoneNumber = body.hasOwnProperty("phoneNumber");
         if(!isPhoneNumber) {
-            return res.status(401).json({message: "no phone number!"});
+            return res.status(400).json({message: "no phone number!"});
         }
 
         const validated = phoneSchema.safeParse(body);
         if(!validated.success) {
-            return res.status(401).json(validated);
+            return res.status(400).json({message: validated.error.message});
         }
 
         const code = (Math.floor(Math.random()*90000) + 10000).toString();
 
         bcrypt.hash(code, 9, async (err, hash)  => {
             if(err) {
-                return res.status(401).json(err);
+                return res.status(400).json(err);
             }
 
             await db.insert(otp).values({code:hash, phone: body.phoneNumber, created_at: new Date(), expires_in: new Date(Date.now() + 2 * 60 * 1000)});
-
 
             const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
             if(smsResult.RetStatus !== 1) {
                 return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
             }
 
-            res.status(201).json({})
+            res.status(200).json({})
 
         });
-    }
-    catch (err) {
-        res.status(500).json(err)
+})
+
+route.post("/phone/send-help", async (req, res) => {
+    try {
+        return res.status(200).json({})
+    } catch (error) {
+        return res.status(500).json({error})
     }
 })
 
@@ -102,6 +104,11 @@ route.post("/phone/verify", async (req, res) => {
                     id: user.id
                 }, process.env.JWT_SECRET, {expiresIn: 14 * 24 * 60 * 60 * 1000});
 
+                res.cookie('x_token', token, {
+                    maxAge: 1000 * 60 * 60 ,
+                    httpOnly: true,
+                    path: '/'
+                })
                 res.status(200).json({token, user});
             })
         });
