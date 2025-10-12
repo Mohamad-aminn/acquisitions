@@ -7,10 +7,23 @@ import {verifyToken} from "#middleware/auth.js";
 const route = express.Router();
 
 route.get('/get', verifyToken, (req, res) => {
-    const userCookie = req.cookies.x_token
-    const exist = req.cookies.xx_token
+    const exist = req.cookies.token
+    const token = req.cookies['token']
+    console.log(req.cookies)
 
-    return res.status(200).json({user: req.user, userCookie, exist})
+    console.log(exist)
+    console.log(token)
+
+     if(!token) {
+         res.cookie('token', 'this is value', {
+             maxAge: 60 * 60 * 1000,
+             httpOnly: true
+         })
+     }
+
+
+
+    return res.status(200).json({user: req.user, exist, urmom:exist})
 })
 
 export default route;

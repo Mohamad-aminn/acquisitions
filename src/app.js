@@ -8,11 +8,16 @@ import logger from "#configs/logger.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import db from "#configs/db.js";
+import {setHeader} from "#middleware/header.js";
 
 const app = express();
 
+app.use(setHeader)
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

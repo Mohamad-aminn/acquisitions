@@ -8,6 +8,7 @@ import {desc, eq, or} from "drizzle-orm";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import {getUserOrCreateOne} from "#utils/user.js";
+import {verifyToken} from "#middleware/auth.js";
 
 const route = express.Router();
 
@@ -21,7 +22,7 @@ route.post("/phone/send-otp", async (req, res) => {
 
         const validated = phoneSchema.safeParse(body);
         if(!validated.success) {
-            return res.status(400).json({message: validated.error.message});
+            return res.status(400).json({message: "validated.error.message"});
         }
 
         const code = (Math.floor(Math.random()*90000) + 10000).toString();
@@ -33,12 +34,12 @@ route.post("/phone/send-otp", async (req, res) => {
 
             await db.insert(otp).values({code:hash, phone: body.phoneNumber, created_at: new Date(), expires_in: new Date(Date.now() + 2 * 60 * 1000)});
 
-            const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
-            if(smsResult.RetStatus !== 1) {
-                return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
-            }
+            // const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
+            // if(smsResult.RetStatus !== 1) {
+            //     return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
+            // }
 
-            res.status(200).json({})
+            res.status(400).json({message: 'fuck this'})
 
         });
 })
@@ -51,6 +52,20 @@ route.post("/phone/send-help", async (req, res) => {
     }
 })
 
+route.post('/refresh',verifyToken, async (req, res) => {
+    try {
+        const user = req.user;
+
+        const accessToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {maxAge: 1000 * 60 * 60 * 24});
+        const refreshToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {maxAge: 1000 * 60 * 60 * 24 * 14});
+
+        return res.status(200).json({accessToken, refreshToken})
+
+
+    } catch (err) {
+        return res.status(500).json(err);
+    }
+})
 route.post("/phone/verify", async (req, res) => {
     try {
         const body = req.body;
@@ -102,7 +117,7 @@ route.post("/phone/verify", async (req, res) => {
 
                 const token = jwt.sign({
                     id: user.id
-                }, process.env.JWT_SECRET, {expiresIn: 14 * 24 * 60 * 60 * 1000});
+                }, process.env.JWT_SECRET, {maxAge: 14 * 24 * 60 * 60 * 1000});
 
                 res.cookie('x_token', token, {
                     maxAge: 1000 * 60 * 60 ,
