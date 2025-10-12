@@ -32,14 +32,15 @@ route.post("/phone/send-otp", async (req, res) => {
                 return res.status(400).json(err);
             }
 
-            await db.insert(otp).values({code:hash, phone: body.phoneNumber, created_at: new Date(), expires_in: new Date(Date.now() + 2 * 60 * 1000)});
+            const otpObject = await db.insert(otp).values({code:hash, phone: body.phoneNumber, created_at: new Date(), expires_in: new Date(Date.now() + 2 * 60 * 1000)});
+            console.log(otpObject)
 
-            // const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
-            // if(smsResult.RetStatus !== 1) {
-            //     return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
-            // }
+            const smsResult = await sms.send(body.phoneNumber, process.env.SMS_FROM, `${code} \n\n` + randomText[Math.floor(Math.random() * 7)])
+            if(smsResult.RetStatus !== 1) {
+                return res.status(400).json({message: smsResponseCode[smsResult.RetStatus]})
+            }
 
-            res.status(400).json({message: 'fuck this'})
+            res.status(200).json({})
 
         });
 })
@@ -56,8 +57,8 @@ route.post('/refresh',verifyToken, async (req, res) => {
     try {
         const user = req.user;
 
-        const accessToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {maxAge: 1000 * 60 * 60 * 24});
-        const refreshToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {maxAge: 1000 * 60 * 60 * 24 * 14});
+        const accessToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 1000 * 60 * 60 * 24});
+        const refreshToken = jwt.sign({id: user.id}, process.env.JWT_SECRET, {expiresIn: 1000 * 60 * 60 * 24 * 14});
 
         return res.status(200).json({accessToken, refreshToken})
 
@@ -68,14 +69,13 @@ route.post('/refresh',verifyToken, async (req, res) => {
 })
 route.post("/phone/verify", async (req, res) => {
     try {
-        const body = req.body;
-        const validate = loginSchema.safeParse(body);
+        const validate = loginSchema.safeParse(req.body);
 
         if(!validate.success) {
             return res.status(401).json(validate);
         }
 
-        const {name,password, email, phoneNumber, otp: userCode} = body;
+        const {name,password, email, phoneNumber, otp: userCode} = req.body;
 
         const otpObject = await db.select()
             .from(otp)
@@ -83,8 +83,9 @@ route.post("/phone/verify", async (req, res) => {
             .limit(1);
         console.log(new Date())
         console.log(await db.select().from(otp))
+        console.log(otpObject)
         if (otpObject.length === 0) {
-            return  res.status(400).json({message: "you did not request a code yet!"});
+            return  res.status(406).json({message: "you did not request a code yet!"});
         }
 
         if(otpObject[0].expires_in < new Date()) {
@@ -93,39 +94,37 @@ route.post("/phone/verify", async (req, res) => {
         }
 
         bcrypt.compare(userCode, otpObject[0].code, async (err, result) => {
-            if(err) {
-                return res.status(401).json(err);
-            }
+
             if(!result) {
                 return res.status(400).json({message: 'wrong code!'});
             }
 
-            bcrypt.hash(password, 9, async (err, hash) => {
-                if(err) {
-                    return res.status(401).json(err);
+            const hashedPassword = await bcrypt.hash(password, 9);
+            if(!hashedPassword) {
+                return res.status(400).json(hashedPassword);
+            }
+
+            const user = await getUserOrCreateOne(
+                {
+                    name,
+                    phone: phoneNumber,
+                    email,
+                    password: hashedPassword,
                 }
-                const user = await getUserOrCreateOne(
-                    {
-                        name,
-                        phone: phoneNumber,
-                        email,
-                        password: hash,
-                    }
-                )
-                console.log(user)
-                await db.delete(otp).where(eq(otp.phone, phoneNumber));
+            )
+            console.log(user)
+            await db.delete(otp).where(eq(otp.phone, phoneNumber));
 
-                const token = jwt.sign({
-                    id: user.id
-                }, process.env.JWT_SECRET, {maxAge: 14 * 24 * 60 * 60 * 1000});
+            const accessToken = jwt.sign({
+                id: user.id
+            }, process.env.JWT_SECRET, {expiresIn: 14 * 24 * 60 * 60 * 1000});
+            const refreshToken = jwt.sign({
+                id: user.id
+            }, process.env.JWT_SECRET, {expiresIn: 14 * 24 * 60 * 60 * 1000});
 
-                res.cookie('x_token', token, {
-                    maxAge: 1000 * 60 * 60 ,
-                    httpOnly: true,
-                    path: '/'
-                })
-                res.status(200).json({token, user});
-            })
+            console.log(accessToken, refreshToken, user, hashedPassword)
+            return res.status(200).json({accessToken, refreshToken});
+
         });
     }catch (err) {
         console.log(err)
