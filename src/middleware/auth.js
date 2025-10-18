@@ -7,7 +7,6 @@ import arcjet, {detectBot, shield, tokenBucket} from "@arcjet/node";
 
 export const verifyToken = async (req, res, next) => {
     const token = req.get('x_token');
-
     if(!token){
         return res.status(401).json({message:"unauthorized!"});
     }

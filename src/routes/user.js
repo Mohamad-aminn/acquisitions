@@ -6,9 +6,11 @@ import {verifyToken} from "#middleware/auth.js";
 
 const route = express.Router();
 
-route.get('/get', verifyToken, (req, res) => {
 
-    return res.status(200).json({user: req.user})
+route.get('/get', verifyToken, async (req, res) => {
+    return res.status(200).json(req.user)
 })
+
+export con
 
 export default route;

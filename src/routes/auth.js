@@ -53,7 +53,7 @@ route.post("/phone/send-help", async (req, res) => {
     }
 })
 
-route.post('/refresh',verifyToken, async (req, res) => {
+route.get('/refresh',verifyToken, async (req, res) => {
     try {
         const user = req.user;
 
